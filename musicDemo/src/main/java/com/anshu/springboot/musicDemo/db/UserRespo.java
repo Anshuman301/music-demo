@@ -1,6 +1,6 @@
 package com.anshu.springboot.musicDemo.db;
 
-import com.anshu.springboot.musicDemo.model.User;
+import com.anshu.springboot.musicDemo.model.entity.User;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

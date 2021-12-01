@@ -1,4 +1,4 @@
-package com.anshu.springboot.musicDemo.model;
+package com.anshu.springboot.musicDemo.model.entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "film")
@@ -31,10 +33,12 @@ public class Film {
     @JoinTable(name = "film_actor", joinColumns = @JoinColumn(name="film_id"), inverseJoinColumns = @JoinColumn(name="actor_id"))
     private List<Actor> actors;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "film_category", joinColumns = @JoinColumn(name = "film_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "inventory", joinColumns = @JoinColumn(name = "film_id"), inverseJoinColumns = @JoinColumn(name = "store_id"))
     private List<Store> stores;

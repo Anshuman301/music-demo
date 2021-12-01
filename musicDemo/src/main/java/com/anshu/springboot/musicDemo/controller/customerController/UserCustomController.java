@@ -1,10 +1,10 @@
-package com.anshu.springboot.musicDemo.controller;
+package com.anshu.springboot.musicDemo.controller.customerController;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.anshu.springboot.musicDemo.db.UserRespo;
-import com.anshu.springboot.musicDemo.model.User;
+import com.anshu.springboot.musicDemo.model.entity.User;
 import com.anshu.springboot.musicDemo.utils.JwtTokenUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;

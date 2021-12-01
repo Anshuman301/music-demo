@@ -1,6 +1,6 @@
 package com.anshu.springboot.musicDemo.model.projection;
 
-import com.anshu.springboot.musicDemo.model.Actor;
+import com.anshu.springboot.musicDemo.model.entity.Actor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;

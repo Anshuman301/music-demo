@@ -2,7 +2,7 @@ package com.anshu.springboot.musicDemo.db;
 
 import java.util.List;
 
-import com.anshu.springboot.musicDemo.model.Actor;
+import com.anshu.springboot.musicDemo.model.entity.Actor;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

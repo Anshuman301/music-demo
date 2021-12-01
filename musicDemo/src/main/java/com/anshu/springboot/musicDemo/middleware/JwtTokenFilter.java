@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.anshu.springboot.musicDemo.db.UserRespo;
-import com.anshu.springboot.musicDemo.model.User;
+import com.anshu.springboot.musicDemo.model.entity.User;
 import com.anshu.springboot.musicDemo.utils.JwtTokenUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.anshu.springboot.musicDemo.model;
+package com.anshu.springboot.musicDemo.model.entity;
 
 import java.util.List;
 

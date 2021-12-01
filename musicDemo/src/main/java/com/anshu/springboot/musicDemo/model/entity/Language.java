@@ -1,4 +1,4 @@
-package com.anshu.springboot.musicDemo.model;
+package com.anshu.springboot.musicDemo.model.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

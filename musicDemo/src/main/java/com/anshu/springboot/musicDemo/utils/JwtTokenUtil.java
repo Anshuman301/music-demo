@@ -2,7 +2,7 @@ package com.anshu.springboot.musicDemo.utils;
 
 import java.util.Date;
 
-import com.anshu.springboot.musicDemo.model.User;
+import com.anshu.springboot.musicDemo.model.entity.User;
 
 import org.springframework.stereotype.Component;
 
