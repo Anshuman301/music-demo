@@ -6,7 +6,6 @@ import org.springframework.data.rest.core.config.Projection;
 
 @Projection(name = "filmData", types = {Film.class})
 public interface FilmData {
-    int getId();
     String getTitle();
     String getDesc();
 }
