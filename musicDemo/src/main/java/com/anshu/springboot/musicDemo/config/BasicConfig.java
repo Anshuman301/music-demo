@@ -1,6 +1,8 @@
 package com.anshu.springboot.musicDemo.config;
 import com.anshu.springboot.musicDemo.model.entity.Actor;
 import com.anshu.springboot.musicDemo.model.entity.Film;
+import com.anshu.springboot.musicDemo.model.projection.ActorData;
+import com.anshu.springboot.musicDemo.model.projection.FilmData;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
@@ -14,6 +16,9 @@ public class BasicConfig implements RepositoryRestConfigurer{
         System.out.println("HIiiiiiiiiiii");
        config.exposeIdsFor(Actor.class, Film.class);
        config.setReturnBodyForPutAndPost(false);
+       config.useHalAsDefaultJsonMediaType(false);
+       config.getProjectionConfiguration().addProjection(ActorData.class, Actor.class);
+       config.getProjectionConfiguration().addProjection(FilmData.class, Film.class);
     }
 }
 

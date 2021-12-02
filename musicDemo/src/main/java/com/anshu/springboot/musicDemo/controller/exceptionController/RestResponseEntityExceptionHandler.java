@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler{
-    @ExceptionHandler(value = {ResourceNotFoundException.class, ConversionFailedException.class, NumberFormatException.class, IllegalStateException.class})
+    @ExceptionHandler(value = {ResourceNotFoundException.class, ConversionFailedException.class, NumberFormatException.class})
     protected ResponseEntity<Object> handleNotFoundType(RuntimeException ex) {
         Map<String, Boolean> body = new HashMap<>();
         body.put("success", false);
