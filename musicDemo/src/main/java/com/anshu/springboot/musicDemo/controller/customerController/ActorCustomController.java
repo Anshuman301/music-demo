@@ -2,7 +2,9 @@ package com.anshu.springboot.musicDemo.controller.customerController;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.anshu.springboot.musicDemo.db.ActorRespo;
@@ -33,7 +35,7 @@ public class ActorCustomController {
     private FilmRespo filmRespo;
 
     @CrossOrigin(maxAge = 3600)
-    @RequestMapping(path = "actors/actorsForFilm/{id}", method = RequestMethod.POST)
+    @RequestMapping(path = "celeb/updateFilms/{id}", method = RequestMethod.POST)
     public @ResponseBody ResponseEntity<?> saveFilmsOnActor(@PathVariable int id, @RequestBody List<Film> films, Principal principal) {
         System.out.println("Principal:: " + principal.getName());
         try {
@@ -41,12 +43,17 @@ public class ActorCustomController {
             List<Actor> actors = new ArrayList<Actor>();
             if(optActor.isPresent())
                 actors.add(optActor.get());
-            List<Film> dbFilms = filmRespo.saveAll(films);
+            if(actors.size() != 0) {
+                List<Film> dbFilms = new ArrayList<>();
+            for(Film film : films)
+                dbFilms.add(filmRespo.save(film));
             for(Film film: dbFilms)
                 film.updateActors(actors);
             filmRespo.saveAll(dbFilms);
             CollectionModel<Actor> model = CollectionModel.of(actors);
             return ResponseEntity.ok(model);
+        } else 
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new HashMap<>(Map.of("success", false)));
         } catch(Exception ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Entity Not Found", ex);
         }

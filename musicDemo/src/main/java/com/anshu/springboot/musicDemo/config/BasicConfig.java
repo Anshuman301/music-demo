@@ -1,4 +1,5 @@
 package com.anshu.springboot.musicDemo.config;
+import com.anshu.springboot.musicDemo.db.ActorRespo;
 import com.anshu.springboot.musicDemo.model.entity.Actor;
 import com.anshu.springboot.musicDemo.model.entity.Film;
 import com.anshu.springboot.musicDemo.model.projection.ActorData;
@@ -19,6 +20,11 @@ public class BasicConfig implements RepositoryRestConfigurer{
        config.useHalAsDefaultJsonMediaType(false);
        config.getProjectionConfiguration().addProjection(ActorData.class, Actor.class);
        config.getProjectionConfiguration().addProjection(FilmData.class, Film.class);
+
+    //    config.withEntityLookup().forRepository(ActorRespo.class)
+    //    .withIdMapping(Actor :: getFirstName).withLookup(ActorRespo::findByFirstName);
+
+       config.setBasePath("/");
     }
 }
 
