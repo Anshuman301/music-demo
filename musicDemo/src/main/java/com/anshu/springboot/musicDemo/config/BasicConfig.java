@@ -9,6 +9,9 @@ import org.springframework.core.convert.support.ConfigurableConversionService;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.LinkRelation;
+import org.springframework.hateoas.server.LinkRelationProvider;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 @Configuration
@@ -24,13 +27,39 @@ public class BasicConfig implements RepositoryRestConfigurer{
             }
         };
     }
-    
+
+    @Bean
+    public LinkRelationProvider getLinkRelationProvider() {
+        return new LinkRelationProvider() {
+
+            @Override
+            public LinkRelation getItemResourceRelFor(Class<?> type) {
+                // TODO Auto-generated method stub
+                return LinkRelation.of(StringUtils.uncapitalize(type.getSimpleName()) + "List");
+            }
+
+            @Override
+            public LinkRelation getCollectionResourceRelFor(Class<?> type) {
+                // TODO Auto-generated method stub
+                return LinkRelation.of(StringUtils.uncapitalize(type.getSimpleName()));
+            }
+
+            @Override
+            public boolean supports(LookupContext delimiter) {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+        };
+    }
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
         System.out.println("HIiiiiiiiiiii");
        config.exposeIdsFor(Actor.class, Film.class);
        config.useHalAsDefaultJsonMediaType(false);
        config.setReturnBodyForPutAndPost(false);
+       config.setLinkRelationProvider(getLinkRelationProvider());
+       RepositoryRestConfigurer.super.configureRepositoryRestConfiguration(config, cors);
     }
     @Override
     public void configureConversionService(ConfigurableConversionService conversionService) {
@@ -38,6 +67,5 @@ public class BasicConfig implements RepositoryRestConfigurer{
         conversionService.addConverter(Actor.class, EntityModel.class, getConverter());;
         RepositoryRestConfigurer.super.configureConversionService(conversionService);
     }
-
 }
 
