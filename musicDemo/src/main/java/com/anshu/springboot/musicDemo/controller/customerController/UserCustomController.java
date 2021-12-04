@@ -12,10 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController("/users")
+@RestController
+@RequestMapping(path = "/users")
 public class UserCustomController {
     @Autowired
     private UserRespo userRespo;
@@ -32,7 +34,7 @@ public class UserCustomController {
         return ResponseEntity.ok().header("music-token", "Bearer " +token).body(new HashMap<>(Map.of("success", true)));
     }
 
-    @GetMapping(path = "/users/logout")
+    @GetMapping(path = "/logout")
     public @ResponseBody ResponseEntity<?> logoutUser() {
         return ResponseEntity.ok().body(new HashMap<>(Map.of("success", true)));
     }

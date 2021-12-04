@@ -11,17 +11,25 @@ import com.anshu.springboot.musicDemo.db.ActorRespo;
 import com.anshu.springboot.musicDemo.db.FilmRespo;
 import com.anshu.springboot.musicDemo.model.entity.Actor;
 import com.anshu.springboot.musicDemo.model.entity.Film;
+import com.anshu.springboot.musicDemo.model.projection.ActorData;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-@RestController("/celeb")
+@RestController
+@RequestMapping("/celeb")
 public class ActorCustomController {
     
     @Autowired
@@ -34,22 +42,57 @@ public class ActorCustomController {
     public ResponseEntity<?> saveFilmsOnActor(@PathVariable int id, @RequestBody List<Film> films, Principal principal) {
         System.out.println("Principal:: " + principal.getName());
         try {
-            Optional<Actor> optActor = actorRespo.findById(id);
-            List<Actor> actors = new ArrayList<Actor>();
+            Optional<Actor> optActor = actorRespo.findActorById(id);
+            Actor actor = null;
             if(optActor.isPresent())
-                actors.add(optActor.get());
-            if(actors.size() != 0) {
-                List<Film> dbFilms = new ArrayList<>();
-            for(Film film : films)
-                dbFilms.add(filmRespo.save(film));
+                actor = optActor.get();
+            if(actor != null) {
+            List<Film> dbFilms = filmRespo.saveAll(films);
             for(Film film: dbFilms)
-                film.updateActors(actors);
+                film.updateActors(new ArrayList<>(List.of(actor)));
             filmRespo.saveAll(dbFilms);
             return ResponseEntity.ok(new HashMap<>(Map.of("success", true)));
         } else 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new HashMap<>(Map.of("success", false)));
         } catch(Exception ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Entity Not Found", ex);
+        }
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<?> getCelebList(@RequestParam int page, @RequestParam int size) {
+        try {
+        Pageable pageable = PageRequest.of(page, size);
+          Page<ActorData> actorsItr =  actorRespo.findAllProjectedBy(pageable);
+          return ResponseEntity.ok(new HashMap<>(Map.of("list", actorsItr.getContent())));
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Entity Not Found", ex);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCelebListById(@PathVariable int id) {
+        try {
+            ActorData actorData = actorRespo.findActorProjectedById(id);
+            return ResponseEntity.ok(new HashMap<>(Map.of("actor", actorData)));
+        }catch(Exception ex) {
+            System.err.println(ex.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Entity Not Found", ex);
+        }
+    }
+
+    @PostMapping("/saveOrAll")
+    public ResponseEntity<?> saveCelebEntityorAll(@RequestBody List<Actor> actors) {
+        try {
+            List<Actor> dbActor = actorRespo.saveAll(actors);
+            if(dbActor.size() !=0) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(new HashMap<>(Map.of("success", true)));
+            } else
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new HashMap<>(Map.of("success", false)));
+        }catch(Exception e) {
+            System.err.println(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity Not Saved", e);
         }
     }
 }

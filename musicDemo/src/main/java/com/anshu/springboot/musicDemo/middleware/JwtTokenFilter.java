@@ -1,6 +1,8 @@
 package com.anshu.springboot.musicDemo.middleware;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -10,8 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.anshu.springboot.musicDemo.db.UserRespo;
 import com.anshu.springboot.musicDemo.model.entity.User;
 import com.anshu.springboot.musicDemo.utils.JwtTokenUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -29,18 +33,21 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         System.out.println("Hi::" + request.getRequestURI());
         final String header = request.getHeader("Authorization");
         if (!StringUtils.hasLength(header) || !header.startsWith("Bearer ")) {
-            chain.doFilter(request, response);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new HashMap<>(Map.of("success", false))));
             return;
         }
         final String token = header.split(" ")[1].trim();
         if (!jwtTokenUtil.validateToken(token)) {
-            chain.doFilter(request, response);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new HashMap<>(Map.of("success", false))));
             return;
         }
         // Get user identity and set it on the spring security context
         User user = userRespo.findByEmailAddress(jwtTokenUtil.getEmailAddress(token));
         if(user == null) {
-            chain.doFilter(request, response);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write(new ObjectMapper().writeValueAsString(new HashMap<>(Map.of("success", false))));
             return;
         }
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -56,7 +63,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return "/api/users".equals(request.getRequestURI()); 
+        return "/api/users/isSuccess".equals(request.getRequestURI()); 
     }
     
 }
