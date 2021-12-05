@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.anshu.springboot.musicDemo.annotation.MapperDto;
 import com.anshu.springboot.musicDemo.db.ActorRespo;
 import com.anshu.springboot.musicDemo.db.FilmRespo;
+import com.anshu.springboot.musicDemo.model.dto.ActorUpdationDTO;
 import com.anshu.springboot.musicDemo.model.entity.Actor;
 import com.anshu.springboot.musicDemo.model.entity.Film;
 import com.anshu.springboot.musicDemo.model.projection.ActorData;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -83,13 +86,28 @@ public class ActorCustomController {
     }
 
     @PostMapping("/saveOrAll")
-    public ResponseEntity<?> saveCelebEntityorAll(@RequestBody List<Actor> actors) {
+    public ResponseEntity<?> saveCelebEntityOrAll(@RequestBody List<Actor> actors) {
         try {
             List<Actor> dbActor = actorRespo.saveAll(actors);
             if(dbActor.size() !=0) {
                 return ResponseEntity.status(HttpStatus.CREATED).body(new HashMap<>(Map.of("success", true)));
             } else
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new HashMap<>(Map.of("success", false)));
+        }catch(Exception e) {
+            System.err.println(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity Not Saved", e);
+        }
+    }
+
+    @PatchMapping("/updateOrAll")
+    public ResponseEntity<?> updateCelebOrAll(@MapperDto(type = ActorUpdationDTO.class) Actor actor) {
+        try {
+            System.out.println(actor.toString());
+            Actor updatedDbActor = actorRespo.save(actor);
+            if(updatedDbActor != null) 
+                return ResponseEntity.ok(new HashMap<>(Map.of("message", "Updated")));
+            else
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new HashMap<>(Map.of("message", "Cannot Update")));
         }catch(Exception e) {
             System.err.println(e.getMessage());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity Not Saved", e);

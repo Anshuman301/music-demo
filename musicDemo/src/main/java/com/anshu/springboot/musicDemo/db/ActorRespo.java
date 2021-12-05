@@ -18,6 +18,6 @@ public interface ActorRespo extends Repository<Actor, Integer>{
     public Page<ActorData> findAllProjectedBy(Pageable p);
     public Optional<Actor> findActorById(int id);
     public ActorData findActorProjectedById(int id);
-
     public List<Actor> saveAll(Iterable<Actor> actors);
+    public Actor save(Actor actor);
 }

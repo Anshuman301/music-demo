@@ -12,138 +12,42 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-@Entity
-@Table(name = "film")
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+@Entity @Table(name = "film") @NoArgsConstructor @RequiredArgsConstructor @Getter @Setter @ToString
 public class Film {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "film_id")
     private int id;
-    @Column(name = "title")
-    private String title;
-    @Column(name = "description")
-    private String desc;
-    @Column(name = "language_id")
-    private int langId;
+    @Column(name = "title") @NonNull private String title;
+    @Column(name = "description") @NonNull private String desc;
+    @Column(name = "language_id") @NonNull private int langId;
 
-    @ManyToMany
+    @ManyToMany @ToString.Exclude
     @JoinTable(name = "film_actor", joinColumns = @JoinColumn(name="film_id"), inverseJoinColumns = @JoinColumn(name="actor_id"))
     private List<Actor> actors;
 
-    @ManyToMany
+    @ManyToMany @ToString.Exclude
     @JoinTable(name = "film_category", joinColumns = @JoinColumn(name = "film_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;
 
-    @ManyToMany
+    @ManyToMany @ToString.Exclude
     @JoinTable(name = "inventory", joinColumns = @JoinColumn(name = "film_id"), inverseJoinColumns = @JoinColumn(name = "store_id"))
     private List<Store> stores;
-    public Film() {}
-    
-    public Film(String title, String desc, int langId) {
-        this.title = title;
-        this.desc = desc;
-        this.langId = langId;
-    }
 
-    public int getId() {
-        return id;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((desc == null) ? 0 : desc.hashCode());
-        result = prime * result + langId;
-        result = prime * result + ((title == null) ? 0 : title.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Film other = (Film) obj;
-        if (desc == null) {
-            if (other.desc != null)
-                return false;
-        } else if (!desc.equals(other.desc))
-            return false;
-        if (langId != other.langId)
-            return false;
-        if (title == null) {
-            if (other.title != null)
-                return false;
-        } else if (!title.equals(other.title))
-            return false;
-        return true;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public void setLangId(int langId) {
-        this.langId = langId;
-    }
-
-    public int getLangId() {
-        return langId;
-    }
-
-    public void setActors(List<Actor> actors) {
-        this.actors = actors;
-    }
-
-    public List<Actor> getActors() {
-        return actors;
-    }
     public void updateActors(List<Actor> newActor) {
-        List<Actor> prevActor = getActors();
+        List<Actor> prevActor = this.actors;
         if(prevActor == null)
             prevActor = new ArrayList<Actor>();
         for(Actor actor : newActor)
             prevActor.add(actor);
-        setActors(prevActor);
-    }
-
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
-    }
-
-    public List<Store> getStores() {
-        return stores;
-    }
-    public void setStores(List<Store> stores) {
-        this.stores = stores;
-    }
-    @Override
-    public String toString() {
-        return "Film [desc=" + desc + ", id=" + id + ", title=" + title + "]";
+        this.actors = prevActor;
     }
     
 }
