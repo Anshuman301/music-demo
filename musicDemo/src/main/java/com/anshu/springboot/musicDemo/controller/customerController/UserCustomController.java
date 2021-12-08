@@ -8,6 +8,8 @@ import com.anshu.springboot.musicDemo.model.entity.User;
 import com.anshu.springboot.musicDemo.utils.JwtTokenUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserCustomController {
     @Autowired
     private UserRespo userRespo;
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    @Value("${key.secret1}")
+    private String SECRET;
+
+    @Bean
+    public JwtTokenUtil jwtTokenUtil() {
+        return new JwtTokenUtil(SECRET);
+    }
 
     @PostMapping(path = "/isSuccess")
     public ResponseEntity<?> saveUser(@RequestBody User user) {
@@ -30,8 +37,8 @@ public class UserCustomController {
         User dbUser = userRespo.findByEmailAddress(user.getEmailAddress());
         if(dbUser == null)
             dbUser = userRespo.save(user);
-        String token = jwtTokenUtil.createToken(dbUser);
-        return ResponseEntity.ok().header("music-token", "Bearer " +token).body(new HashMap<>(Map.of("success", true)));
+        String token = jwtTokenUtil().createToken(dbUser);
+        return ResponseEntity.ok().header("Authorization", "Bearer " +token).body(new HashMap<>(Map.of("success", true)));
     }
 
     @GetMapping(path = "/logout")

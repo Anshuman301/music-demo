@@ -2,6 +2,7 @@ package com.anshu.springboot.musicDemo.config;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.anshu.springboot.musicDemo.middleware.CsrfTokenFilter;
 import com.anshu.springboot.musicDemo.middleware.JwtTokenFilter;
 
 import org.springframework.context.annotation.Bean;
@@ -21,14 +22,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new JwtTokenFilter();
     }
 
+    @Bean
+    public CsrfTokenFilter csrfTokenFilter() {
+        return new CsrfTokenFilter();
+    }
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().formLogin().disable()
+        http.cors().and().csrf().disable().formLogin().disable().logout().disable().anonymous().disable().rememberMe().disable()
         .authorizeRequests()
         .antMatchers("/celeb/**")
         .authenticated();
-
-        http.addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+        http.addFilterAfter(csrfTokenFilter(), CorsFilter.class)
+        .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
         .exceptionHandling()
         .authenticationEntryPoint(
                         (request, response, ex) -> {
@@ -48,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-        config.addExposedHeader("music-token");
+        config.addExposedHeader("Authorization");
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

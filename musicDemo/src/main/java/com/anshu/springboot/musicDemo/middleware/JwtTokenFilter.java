@@ -15,6 +15,8 @@ import com.anshu.springboot.musicDemo.utils.JwtTokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,8 +25,15 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class JwtTokenFilter extends OncePerRequestFilter {
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    @Value("${key.secret1}")
+    private String SECRET;
+
+    @Bean
+    public JwtTokenUtil jwtTokenUtil() {
+        System.out.println("Secret1" + SECRET);
+        return new JwtTokenUtil(SECRET);
+    }
+
     @Autowired
     private UserRespo userRespo;
     @Override
@@ -38,13 +47,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
         final String token = header.split(" ")[1].trim();
-        if (!jwtTokenUtil.validateToken(token)) {
+        if (!jwtTokenUtil().validateToken(token)) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.getWriter().write(new ObjectMapper().writeValueAsString(new HashMap<>(Map.of("success", false))));
             return;
         }
         // Get user identity and set it on the spring security context
-        User user = userRespo.findByEmailAddress(jwtTokenUtil.getEmailAddress(token));
+        User user = userRespo.findByEmailAddress(jwtTokenUtil().getEmailAddress(token));
         if(user == null) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.getWriter().write(new ObjectMapper().writeValueAsString(new HashMap<>(Map.of("success", false))));

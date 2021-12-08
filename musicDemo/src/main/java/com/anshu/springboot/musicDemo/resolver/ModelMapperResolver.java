@@ -12,6 +12,7 @@ import com.anshu.springboot.musicDemo.annotation.MapperDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpInputMessage;
@@ -26,7 +27,9 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
 
 public class ModelMapperResolver extends RequestResponseBodyMethodProcessor {
-    private static final ModelMapper modelMapper = new ModelMapper();
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     private EntityManager entityManager;
 
