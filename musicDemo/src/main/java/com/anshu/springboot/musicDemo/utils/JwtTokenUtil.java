@@ -44,7 +44,8 @@ public class JwtTokenUtil {
         System.out.println("Secret2" + secret);
         try {
             Claims claims = Jwts.parser().parseClaimsJwt(token).getBody();
-            if(new Date().getTime() > claims.getExpiration().getTime())
+            Date date = new Date();
+            if(date.getTime() > claims.getExpiration().getTime() && date.getTime() < claims.getIssuedAt().getTime())
                 return false;
             return true;
         }catch(Exception e) {

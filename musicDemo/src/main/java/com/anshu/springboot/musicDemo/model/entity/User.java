@@ -31,4 +31,5 @@ public class User {
     public String getEmailAddress() {
         return emailAddress;
     }
+
 }
